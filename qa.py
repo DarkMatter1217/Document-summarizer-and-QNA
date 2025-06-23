@@ -53,7 +53,7 @@ QUESTION:
 
 def generate_questions(text, num_questions=3):
     prompt = f"""Read the following document and generate {num_questions} logic-based or comprehension-focused questions.
-
+you can use markdown format for the questions. but do not use [1] or [2] or [3] etc or hyperlinks .
 Document:
 {text[:4000]}
 
@@ -84,7 +84,7 @@ def evaluate_user_answer(vectordb, question, user_answer):
     context = "\n---\n".join([doc.page_content for doc in vectordb.similarity_search(question, k=3)])
     prompt = f"""
 Given the question and the user's answer, compare it with the document's content and provide feedback.
-
+you can use markdown format for the questions. but do not use [1] or [2] or [3] etc or hyperlinks .
 QUESTION: {question}
 USER ANSWER: {user_answer}
 
