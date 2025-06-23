@@ -25,8 +25,8 @@ def answer_question(vectordb, question, top_k=3):
     context = "\n---\n".join([doc.page_content for doc in relevant_docs])
 
     prompt = f"""Answer the following question using the provided document context.
-Include justification using the source text. Quote reference from the source .Answer clearly using only information provided in the context 
-without any citations from external sources. use only text do not use [1] or [2] or [3] etc.
+Include justification using the source text. Quote reference from the source . 
+without any citations from external sources. do not use [1] or [2] or [3] etc or hyperlinks . you can use markdown format for the answer.
 CONTEXT:
 {context}
 
