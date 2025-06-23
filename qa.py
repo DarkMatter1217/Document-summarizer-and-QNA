@@ -44,7 +44,7 @@ QUESTION:
         "model": "sonar-pro",
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.3,
-        "max_tokens": 300
+        "max_tokens": 10000
     }
 
     response = requests.post(url, json=payload, headers=headers)
@@ -73,7 +73,7 @@ Output format:
         "model": "sonar-pro",
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.5,
-        "max_tokens": 400
+        "max_tokens": 10000
     }
 
     response = requests.post(url, json=payload, headers=headers)
@@ -107,7 +107,7 @@ Output format:
         "model": "sonar-pro",
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.3,
-        "max_tokens": 400
+        "max_tokens": 10000
     }
 
     response = requests.post(url, json=payload, headers=headers)
