@@ -12,7 +12,7 @@ def summarize_with_perplexity(text, max_tokens=150):
         "Content-Type": "application/json"
     }
 
-    prompt = f"Summarize the following content in under 150 words:\n\n{text[:4000]}"
+    prompt = f"Summarize the following content in under 150 words , Summary can be in points or in paragraph or mixture of both and the summary should be clean without any hyperlinks :\n\n{text[:4000]}"
 
     payload = {
         "model": "sonar-pro",
