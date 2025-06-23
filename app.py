@@ -1,5 +1,6 @@
 import streamlit as st
 from io import BytesIO
+from PyPDF2 import PdfReader
 from summarizer import summarize_with_perplexity
 from qa import (
     build_vector_store,
@@ -8,9 +9,7 @@ from qa import (
     evaluate_user_answer
 )
 
-from PyPDF2 import PdfReader
-
-st.set_page_config(page_title="Smart Research Assistant", layout="centered")
+st.set_page_config(page_title="Smart Research Assistant", layout="centered", initial_sidebar_state="auto")
 st.title("📄 Smart Assistant for Research Summarization")
 
 uploaded_file = st.file_uploader("Upload a PDF or TXT document", type=["pdf", "txt"])
@@ -53,54 +52,59 @@ if uploaded_file:
                 st.error(f"Vector store creation failed: {e}")
                 st.stop()
 
-        st.subheader("💬 Ask Anything from Document")
-        user_question = st.text_input("Ask a question:")
-        if user_question:
-            with st.spinner("Thinking..."):
-                try:
-                    answer, reference = answer_question(vectordb, user_question)
-                    st.markdown("**Answer:**")
-                    st.write(answer)
-                    with st.expander("📌 Show Reference Snippets"):
-                        st.code(reference)
-                except Exception as e:
-                    st.error(f"Error: {e}")
+        st.subheader("🧠 Choose Interaction Mode")
+        mode = st.selectbox("Select Mode", ["Ask Anything", "Challenge Me"])
 
-        st.subheader("🧠 Challenge Me")
+        if mode == "Ask Anything":
+            st.subheader("💬 Ask Anything from Document")
+            user_question = st.text_input("Ask a question:")
+            if user_question:
+                with st.spinner("Thinking..."):
+                    try:
+                        answer, reference = answer_question(vectordb, user_question)
+                        st.markdown("**Answer:**")
+                        st.write(answer)
+                        with st.expander("📌 Show Reference Snippets"):
+                            st.code(reference)
+                    except Exception as e:
+                        st.error(f"Error: {e}")
 
-        if st.button("Generate Logic-Based Questions"):
-            with st.spinner("Generating questions..."):
-                try:
-                    questions_text = generate_questions(text)
-                    questions_list = [
-                        q.strip().split(". ", 1)[-1]
-                        for q in questions_text.strip().split("\n")
-                        if q.strip()
-                    ]
-                    st.session_state["challenge_questions"] = questions_list
-                except Exception as e:
-                    st.error(f"Error generating questions: {e}")
+        elif mode == "Challenge Me":
+            st.subheader("🧠 Challenge Me")
 
-        if "challenge_questions" in st.session_state:
-            st.markdown("#### Your Turn:")
-            user_answers = []
-            for i, question in enumerate(st.session_state["challenge_questions"]):
-                st.markdown(f"**Q{i+1}: {question}**")
-                answer = st.text_input(f"Your answer for Q{i+1}:", key=f"ans{i}")
-                user_answers.append((question, answer))
+            if st.button("Generate Logic-Based Questions"):
+                with st.spinner("Generating questions..."):
+                    try:
+                        questions_text = generate_questions(text)
+                        questions_list = [
+                            q.strip().split(". ", 1)[-1]
+                            for q in questions_text.strip().split("\n")
+                            if q.strip()
+                        ]
+                        st.session_state["challenge_questions"] = questions_list
+                    except Exception as e:
+                        st.error(f"Error generating questions: {e}")
 
-            if st.button("Evaluate Answers"):
-                st.subheader("📊 Evaluation Results")
-                for q, a in user_answers:
-                    if a.strip():
-                        with st.spinner(f"Evaluating Q: {q}"):
-                            try:
-                                result = evaluate_user_answer(vectordb, q, a)
-                                st.markdown(f"**Q:** {q}")
-                                st.markdown(f"**Your Answer:** {a}")
-                                st.markdown(f"**Feedback:** {result}")
-                                st.markdown("---")
-                            except Exception as e:
-                                st.error(f"Error evaluating: {e}")
+            if "challenge_questions" in st.session_state:
+                st.markdown("#### Your Turn:")
+                user_answers = []
+                for i, question in enumerate(st.session_state["challenge_questions"]):
+                    st.markdown(f"**Q{i+1}: {question}**")
+                    answer = st.text_input(f"Your answer for Q{i+1}:", key=f"ans{i}")
+                    user_answers.append((question, answer))
+
+                if st.button("Evaluate Answers"):
+                    st.subheader("📊 Evaluation Results")
+                    for q, a in user_answers:
+                        if a.strip():
+                            with st.spinner(f"Evaluating Q: {q}"):
+                                try:
+                                    result = evaluate_user_answer(vectordb, q, a)
+                                    st.markdown(f"**Q:** {q}")
+                                    st.markdown(f"**Your Answer:** {a}")
+                                    st.markdown(f"**Feedback:** {result}")
+                                    st.markdown("---")
+                                except Exception as e:
+                                    st.error(f"Error evaluating: {e}")
     else:
         st.warning("❗ No text was extracted from the uploaded file.")
