@@ -72,15 +72,6 @@ if uploaded_file:
                     answer, reference = answer_question(st.session_state["vectordb"], user_question)
                     st.markdown("**Answer:**")
                     st.write(answer)
-                    with st.expander("📌 Show Reference Snippets"):
-                        st.markdown(
-                            f"""
-                            <div style="background-color:#1e1e1e; padding:1rem; border-radius:10px; border:1px solid #444; font-size:0.9rem; line-height:1.6; overflow-x:auto; white-space:pre-wrap; color:white;">
-                                {reference.replace('\n', '<br>')}
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
                 except Exception as e:
                     st.error(f"Error: {e}")
 
