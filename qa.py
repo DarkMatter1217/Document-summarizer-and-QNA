@@ -1,4 +1,4 @@
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 from langchain.embeddings import SentenceTransformerEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import requests
@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
 
-def build_vector_store(doc_text, persist_dir="db"):
+def build_vector_store(doc_text):
     if not doc_text:
         raise ValueError("Document text is empty. Cannot build vector store.")
 
@@ -16,9 +16,9 @@ def build_vector_store(doc_text, persist_dir="db"):
     docs = text_splitter.create_documents([doc_text])
 
     embedding_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
-    vectordb = Chroma.from_documents(docs, embedding_model, persist_directory=persist_dir)
-    vectordb.persist()
+    vectordb = FAISS.from_documents(docs, embedding_model)
     return vectordb
+
 
 def answer_question(vectordb, question, top_k=3):
     relevant_docs = vectordb.similarity_search(question, k=top_k)

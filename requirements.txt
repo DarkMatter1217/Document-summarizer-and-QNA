@@ -1,8 +1,8 @@
 langchain
-chromadb
 sentence-transformers
 streamlit
 PyPDF2
 requests
 python-dotenv
 langchain-community
+faiss-cpu
