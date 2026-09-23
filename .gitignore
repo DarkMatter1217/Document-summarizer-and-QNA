@@ -1,0 +1,15 @@
+
+# Secrets
+.env
+*.env
+.streamlit/secrets.toml
+credentials.yml
+
+# Local data
+*.db
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
